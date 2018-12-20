@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import controller.ViewManager;
@@ -13,7 +14,7 @@ import controller.ViewManager;
 public class HomeView extends JPanel implements ActionListener {
 	
 	private ViewManager manager;		// manages interactions between the views, model, and database
-	
+	private JButton logOutButton;
 	/**
 	 * Constructs an instance (or objects) of the HomeView class.
 	 * 
@@ -41,7 +42,7 @@ public class HomeView extends JPanel implements ActionListener {
 		// building the HomeView.
 		
 		this.add(new javax.swing.JLabel("HomeView", javax.swing.SwingConstants.CENTER));
-		
+		initLogoutButton();
 		// TODO
 		//
 		// this is where you should build the HomeView (i.e., all the components that
@@ -49,6 +50,14 @@ public class HomeView extends JPanel implements ActionListener {
 		//
 		// feel free to use my layout in LoginView as an example for laying out and
 		// positioning your components.
+	}
+	private void initLogoutButton() {
+		logOutButton = new JButton("Log Out");
+		logOutButton.setBounds(205, 180, 200, 35);
+		logOutButton.addActionListener(this);
+		
+		this.add(logOutButton);
+
 	}
 	
 	/*
@@ -72,6 +81,10 @@ public class HomeView extends JPanel implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if(source.equals(logOutButton)) {
+			manager.logOut();
+		}
 		
 		// TODO
 		//

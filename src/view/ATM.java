@@ -57,7 +57,7 @@ public class ATM extends JFrame {
 		ViewManager manager = new ViewManager(views);
 		
 		// add child views to the parent container
-
+		
 		views.add(new LoginView(manager), LOGIN_VIEW);
 		views.add(new CreateView(manager), CREATE_VIEW);
 		views.add(new HomeView(manager), HOME_VIEW);

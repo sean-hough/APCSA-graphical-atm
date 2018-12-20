@@ -56,6 +56,11 @@ public class ViewManager {
 		}
 	}
 	
+	public void logOut() {
+		account = null;
+		switchTo(ATM.LOGIN_VIEW);
+	}
+	
 	/**
 	 * Switches the active (or visible) view upon request.
 	 * 
