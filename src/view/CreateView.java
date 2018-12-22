@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -47,6 +48,7 @@ public class CreateView extends JPanel implements ActionListener {
 	private JTextField city;
 	private JTextField state;
 	private JTextField postal;
+	private JPasswordField pinField;
 	
 	/**
 	 * Constructs an instance (or object) of the CreateView class.
@@ -87,6 +89,7 @@ public class CreateView extends JPanel implements ActionListener {
 		initCityField();
 		initStateField();
 		initPostalField();
+		initPinField();
 		initButtons();
 
 	}
@@ -227,7 +230,19 @@ public class CreateView extends JPanel implements ActionListener {
 		pane.add(postal);
 		this.add(pane);
 	}
-	
+	private void initPinField() {
+		JPanel pane = new JPanel();
+		JLabel label = new JLabel("PIN", SwingConstants.RIGHT);
+		label.setLabelFor(pinField);
+		label.setFont(new Font("DialogInput", Font.BOLD, 14));
+		
+		pinField = new JPasswordField(4);
+		
+		pane.add(label);
+		pane.add(pinField);
+		this.add(pane);
+	}
+
 	/*
 	 * CreateView is not designed to be serialized, and attempts to serialize will throw an IOException.
 	 * 
@@ -253,6 +268,7 @@ public class CreateView extends JPanel implements ActionListener {
 		
 		if (source.equals(cancelButton)) {
 			manager.switchTo(ATM.LOGIN_VIEW);
+			initialize();
 		} else if(source.equals(createButton)) {
 			boolean create = true;
 
@@ -284,19 +300,35 @@ public class CreateView extends JPanel implements ActionListener {
 				create = false;
 			}
 			
-			int pin = 0000;
-			//TODO -- PIN and accountNumber
+			char[] pinChars = null;
+			if(!pinField.getPassword().equals(null)) {
+				pinChars= pinField.getPassword();
+				for( char digit : pinChars) {
+					if (!Character.isDigit(digit)) {
+						errorMessageLabel.setText("PIN Formatted Incorrectly");
+						create = false;
+					}
+				}
+			}
 			
+			long num = 0;
 			try {
-				long num = manager.maxAccountNumber()+1;
+				num = manager.maxAccountNumber()+1;
 			} catch (SQLException e1) {
-				long num = 0;
 				e1.printStackTrace();
 			}
 			
 			if(create) {
+				String pinString = "";
+				for (char ch : pinChars) {
+					pinString += ch;
+				}
+				int pin = Integer.parseInt(pinString); 
 				User user = new User(pin, dob, phone, first, last, a, c, s, zip);
-				System.out.println("yeee");	
+				BankAccount acc = new BankAccount('Y',num,0,user);
+				manager.insertAccount_wrapp(acc);
+				manager.login(String.valueOf(num), pinChars);
+				initialize();
 			}
 		}
 		// TODO

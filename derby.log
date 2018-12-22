@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Fri Dec 21 23:12:25 EST 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0167-d41d-3d0a-00000f27ba48 
-on database directory C:\Users\shoug\Documents\GitHub\graphical-atm\atm with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@10e5d03e 
+Fri Dec 21 23:34:56 EST 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0167-d431-da00-00000f27ba48 
+on database directory C:\Users\shoug\Documents\GitHub\graphical-atm\atm with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@2c0ccbe9 
 Loaded from file:/C:/Users/shoug/Documents/GitHub/graphical-atm/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=10.0.1+10

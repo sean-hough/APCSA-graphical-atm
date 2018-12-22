@@ -98,4 +98,7 @@ public class ViewManager {
 	public long maxAccountNumber() throws SQLException {
 		return db.maxAccountNumber();
 	}
+	public void insertAccount_wrapp(BankAccount acc) {
+		db.insertAccount(acc);
+	}
 }
