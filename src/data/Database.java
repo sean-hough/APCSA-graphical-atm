@@ -309,4 +309,11 @@ public class Database {
 			insertStmt.close();
 		}
 	}
+	public long maxAccountNumber() throws SQLException {
+		stmt = conn.createStatement();
+		rs = stmt.executeQuery("SELECT MAX(account_number) FROM accounts");
+		rs.next();
+	    return rs.getLong(1);
+		
+	}
 }
