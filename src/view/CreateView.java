@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -43,10 +44,9 @@ public class CreateView extends JPanel implements ActionListener {
 	private JTextField phone1;
 	private JTextField phone2;
 	private JTextField phone3;
-	
 	private JTextField address;
 	private JTextField city;
-	private JTextField state;
+	private JComboBox<String> state;
 	private JTextField postal;
 	private JPasswordField pinField;
 	
@@ -60,6 +60,7 @@ public class CreateView extends JPanel implements ActionListener {
 		super();
 		
 		this.manager = manager;
+		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		initialize();
 	}
 	
@@ -70,14 +71,6 @@ public class CreateView extends JPanel implements ActionListener {
 	 */
 	
 	private void initialize() {
-		// TODO
-		//
-		// this is where you should build the CreateView (i.e., all the components that
-		// allow the user to enter his or her information and create a new account).
-		//
-		// feel free to use my layout in LoginView as an example for laying out and
-		// positioning your components.
-		this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		errorMessageLabel = new JLabel();
 		errorMessageLabel.setText("Please fill in all required fields");
 		this.add(errorMessageLabel);
@@ -91,6 +84,7 @@ public class CreateView extends JPanel implements ActionListener {
 		initPostalField();
 		initPinField();
 		initButtons();
+		this.setAlignmentX(Component.LEFT_ALIGNMENT);;
 
 	}
 	
@@ -121,15 +115,16 @@ public class CreateView extends JPanel implements ActionListener {
 		this.add(pane);
 	}
 	
+	//TODO maybe: make dob start with blank combo boxes and only let you continue if you fill em out
 	private void initBirthdayFields() {
 		JPanel pane = new JPanel();
 		int[] days = IntStream.range(1,32).toArray();
-		String[] stringdays = Arrays.toString(days).split("[\\[\\]]")[1].split(",");
+		String[] stringdays = Arrays.toString(days).replace("[", "[,").split("[\\[\\]]")[1].split(",");
 		
 		int[] years = IntStream.range(1900,2019).toArray();
-		String[] stringyears = Arrays.toString(years).split("[\\[\\]]")[1].split(",");
+		String[] stringyears = Arrays.toString(years).replace("[", "[,").split("[\\[\\]]")[1].split(",");
 		
-		String[] stringmonths = {"January", "Febuary", "March", "April", "May", "June", "July",
+		String[] stringmonths = {"", "January", "Febuary", "March", "April", "May", "June", "July",
 		                          "August", "September", "October", "November", "December"};
 		
 		
@@ -211,7 +206,8 @@ public class CreateView extends JPanel implements ActionListener {
 		label.setLabelFor(state);
 		label.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
-		state = new JTextField(2);
+		String[] abbrivs = {"", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"};
+		state = new JComboBox<String>(abbrivs);
 		
 		pane.add(label);
 		pane.add(state);
@@ -268,19 +264,30 @@ public class CreateView extends JPanel implements ActionListener {
 		
 		if (source.equals(cancelButton)) {
 			manager.switchTo(ATM.LOGIN_VIEW);
+			this.removeAll();
 			initialize();
 		} else if(source.equals(createButton)) {
 			boolean create = true;
 
 			String first = firstName.getText();
 			String last = firstName.getText();
-			if (first.equals(null) || last.equals(null)) {
-				errorMessageLabel.setText("Name Formatted Incorrectly");
+			if (first.equals(null) || last.equals(null) || first.length() > 15 || last.length() > 20) {
+				errorMessageLabel.setText("Name Formatted Incorrectly - If your first name is greater than 15 characters or your last is greater than 20 please only enter the first 15/20 characters.");
 				create = false;
+			} 
+			
+			//TODO maybe: make dob start with blank combo boxes and only let you continue if you fill em out
+			int dob = 0;
+			if (year.getSelectedIndex() != 0 || day.getSelectedIndex() != 0 || month.getSelectedIndex() != 0) {
+				System.out.println(year.getSelectedIndex());
+				System.out.println(day.getSelectedIndex());
+				System.out.println(month.getSelectedIndex());
+				dob = Integer.parseInt((""+(year.getSelectedIndex()+1899)+(month.getSelectedIndex()+0)+(day.getSelectedIndex())));
+			} else {
+				errorMessageLabel.setText("Fill in all fields (Birthday missing)");
+				create = false;
+
 			}
-			
-			int dob = Integer.parseInt((  ""+(year.getSelectedIndex()+1900)+(month.getSelectedIndex()+1)+(day.getSelectedIndex()+1)  ));
-			
 			long phone = 0;
 			if( !phone1.getText().matches("\\d{3}") || !phone2.getText().matches("\\d{3}") || !phone3.getText().matches("\\d{4}")) {
 				errorMessageLabel.setText("Phone Number Formatted Incorrectly");
@@ -292,14 +299,15 @@ public class CreateView extends JPanel implements ActionListener {
 			
 			String a = address.getText();
 			String c = city.getText();
-			String s = state.getText();
+			String s = state.getItemAt(state.getSelectedIndex());
 			String zip = postal.getText();
 			//TODO -- check if postal is numeric
-			if(a.equals(null) || c.equals(null) || s.equals(null) || zip.equals(null) || s.length() != 2) {
+			if(a.equals(null) || c.equals(null) || s.equals("") || zip.equals(null) || a.length() > 30 || c.length() > 30 || zip.length() != 5) {
 				errorMessageLabel.setText("Residency Formatted Incorrectly");
 				create = false;
 			}
 			
+			//TODO check if the length is 4
 			char[] pinChars = null;
 			if(!pinField.getPassword().equals(null)) {
 				pinChars= pinField.getPassword();
@@ -328,9 +336,11 @@ public class CreateView extends JPanel implements ActionListener {
 				BankAccount acc = new BankAccount('Y',num,0,user);
 				manager.insertAccount_wrapp(acc);
 				manager.login(String.valueOf(num), pinChars);
+				this.removeAll();
 				initialize();
 			}
 		}
+		
 		// TODO
 		//
 		// this is where you'll setup your action listener, which is responsible for
