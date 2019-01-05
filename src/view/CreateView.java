@@ -276,12 +276,8 @@ public class CreateView extends JPanel implements ActionListener {
 				create = false;
 			} 
 			
-			//TODO maybe: make dob start with blank combo boxes and only let you continue if you fill em out
 			int dob = 0;
 			if (year.getSelectedIndex() != 0 || day.getSelectedIndex() != 0 || month.getSelectedIndex() != 0) {
-				System.out.println(year.getSelectedIndex());
-				System.out.println(day.getSelectedIndex());
-				System.out.println(month.getSelectedIndex());
 				dob = Integer.parseInt((""+(year.getSelectedIndex()+1899)+(month.getSelectedIndex()+0)+(day.getSelectedIndex())));
 			} else {
 				errorMessageLabel.setText("Fill in all fields (Birthday missing)");
@@ -302,7 +298,7 @@ public class CreateView extends JPanel implements ActionListener {
 			String s = state.getItemAt(state.getSelectedIndex());
 			String zip = postal.getText();
 			//TODO -- check if postal is numeric
-			if(a.equals(null) || c.equals(null) || s.equals("") || zip.equals(null) || a.length() > 30 || c.length() > 30 || zip.length() != 5) {
+			if(a.equals(null) || c.equals(null) || s.equals("") || !zip.matches("\\d{5}") || a.length() > 30 || c.length() > 30 || zip.length() != 5) {
 				errorMessageLabel.setText("Residency Formatted Incorrectly");
 				create = false;
 			}
