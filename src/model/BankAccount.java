@@ -141,7 +141,6 @@ public class BankAccount {
 			return ATM.SUCCESS;
 		}
 	}
-	
 	/**
 	 * Transfers funds from this account to another account.
 	 * 

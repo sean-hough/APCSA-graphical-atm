@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import data.Database;
 import model.BankAccount;
 import view.ATM;
+import view.HomeView;
 import view.LoginView;
 
 public class ViewManager {
@@ -47,6 +48,8 @@ public class ViewManager {
 				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
 				lv.updateErrorMessage("Invalid account number and/or PIN.");
 			} else {
+				HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+				hv.setAccount(account);
 				switchTo(ATM.HOME_VIEW);
 				
 				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
@@ -60,6 +63,7 @@ public class ViewManager {
 	public void logOut() {
 		account = null;
 		switchTo(ATM.LOGIN_VIEW);
+		
 	}
 	
 	/**
@@ -100,5 +104,21 @@ public class ViewManager {
 	}
 	public void insertAccount_wrapp(BankAccount acc) {
 		db.insertAccount(acc);
+	}
+	public boolean updateAccount(BankAccount account) { 
+		return db.updateAccount(account);
+	}
+	public boolean transfer(long accountNum, double amount) {
+		destination = db.getAccount(accountNum);
+		if (destination == null) {
+			JOptionPane.showMessageDialog(views, "Account Number Invalid!", "Error", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		if (account.transfer(destination, amount)==ATM.SUCCESS && db.updateAccount(account) && db.updateAccount(destination)) {
+			return true;
+		}
+		JOptionPane.showMessageDialog(views, "Transfer Unsuccessful!", "Error", JOptionPane.WARNING_MESSAGE);
+		return false;
 	}
 }
