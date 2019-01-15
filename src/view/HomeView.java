@@ -118,11 +118,7 @@ public class HomeView extends JPanel implements ActionListener {
 		}
 		
 		else if (source.equals(DepositButton)) {
-			if (this.deposit()) {
-				statusText.setText("Successful Deposit!");
-			} else {
-				statusText.setText("Unseccessful Deposit");
-			}
+			manager.switchTo(ATM.DEPOSIT_VIEW);
 		}
 		
 		else if (source.equals(WithdrawButton)) {
@@ -143,7 +139,7 @@ public class HomeView extends JPanel implements ActionListener {
 			InfoText.setText(info);
 		}
 	}
-
+	
 	private boolean transfer() {
 		String transfer = "";
 		while (transfer != null) {
@@ -165,7 +161,12 @@ public class HomeView extends JPanel implements ActionListener {
 		}
 		return false;
 	}
-
+	
+	public void setSuccess(boolean success) {
+		if (success) {
+			statusText.setText("Success!");
+		}
+	}
 	public boolean deposit() {
 		String deposit = JOptionPane.showInputDialog("How much would you like to deposit?\n (Enter ONLY numbers greater than 0)");
 		if (deposit == null) {

@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Fri Jan 04 21:34:36 EST 2019:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0168-1bdc-b878-00000f27ceb8 
-on database directory C:\Users\shoug\Documents\GitHub\graphical-atm\atm with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@7e6e40e2 
-Loaded from file:/C:/Users/shoug/Documents/GitHub/graphical-atm/lib/derby.jar
+Tue Jan 15 14:43:36 EST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0168-530a-6388-00000e623590 
+on database directory C:\Users\shough\Desktop\APCSA\graphical-atm\atm with class loader sun.misc.Launcher$AppClassLoader@2a139a55 
+Loaded from file:/C:/Users/shough/Desktop/APCSA/graphical-atm/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=10.0.1+10
-user.dir=C:\Users\shoug\Documents\GitHub\graphical-atm
-os.name=Windows 10
+java.runtime.version=1.8.0_144-b01
+user.dir=C:\Users\shough\Desktop\APCSA\graphical-atm
+os.name=Windows 7
 os.arch=amd64
-os.version=10.0
+os.version=6.1
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
