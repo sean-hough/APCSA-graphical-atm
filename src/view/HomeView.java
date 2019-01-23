@@ -25,11 +25,13 @@ public class HomeView extends JPanel implements ActionListener {
 	private JButton DepositButton;
 	private JButton WithdrawButton;
 	private JButton TransferButton;
+	private JButton InfoButton;
+	private JButton CloseButton;
+
 
 	
 	private JLabel welcomeText;
 	private JLabel InfoText;
-	private JLabel statusText;
 
 	/**
 	 * Constructs an instance (or objects) of the HomeView class.
@@ -79,16 +81,21 @@ public class HomeView extends JPanel implements ActionListener {
 		TransferButton.addActionListener(this);
 		thirdRow.add(TransferButton);
 		this.add(thirdRow);
-		this.add(Box.createVerticalGlue());
 		
-		this.add(Box.createVerticalStrut(40));
-		Box fourthRow = new Box(BoxLayout.X_AXIS);
-		statusText = new JLabel("");
-		fourthRow.add(statusText);
-		this.add(fourthRow);
-
-
-
+		this.add(Box.createVerticalStrut(50));
+		Box lastRow = new Box(BoxLayout.X_AXIS);
+		InfoButton = new JButton("View/Edit Personal Information");
+		InfoButton.addActionListener(this);
+		lastRow.add(InfoButton);
+		this.add(lastRow);
+		
+		this.add(Box.createVerticalStrut(50));
+		Box CloseRow = new Box(BoxLayout.X_AXIS);
+		CloseButton = new JButton("Close Account");
+		CloseButton.addActionListener(this);
+		CloseRow.add(CloseButton);
+		this.add(CloseRow);
+		this.add(Box.createVerticalGlue());
 	}	
 	/*
 	 * HomeView is not designed to be serialized, and attempts to serialize will throw an IOException.
@@ -120,95 +127,32 @@ public class HomeView extends JPanel implements ActionListener {
 		else if (source.equals(DepositButton)) {
 			manager.switchTo(ATM.DEPOSIT_VIEW);
 		}
-		
 		else if (source.equals(WithdrawButton)) {
-			if (this.withdraw()) {
-				statusText.setText("Successful Withdraw!");
-			} else {
-				statusText.setText("Unseccessful Withdraw");
-			}
+			manager.switchTo(ATM.WITHDRAW_VIEW);
 		}
 		
 		else if (source.equals(TransferButton)) {
-			if (this.transfer()) {
-				statusText.setText("Successful Transfer!");
-			} else {
-				statusText.setText("Unseccessful Transfer");
-			}
-			String info = String.format("Account Number: %d, Balance: $%.2f", account.getAccountNumber(), account.getBalance());
-			InfoText.setText(info);
+			manager.switchTo(ATM.TRANSFER_VIEW);		
 		}
-	}
-	
-	private boolean transfer() {
-		String transfer = "";
-		while (transfer != null) {
-			transfer = JOptionPane.showInputDialog("How much would you like to deposit?\n (Enter ONLY numbers greater than 0 and less than your balance)");
-			try {
-				double transferAmount = Double.parseDouble(transfer);
-				if (transferAmount <= account.getBalance() && transferAmount > 0) {
-					String account = JOptionPane.showInputDialog("What account number would you like to transfer to?\n (Enter ONLY valid account numbers)");
-					while (account != null) {
-						try {
-							long accountNum = Long.parseLong(account);
-							return manager.transfer(accountNum, transferAmount);
-						} catch (Exception e1) { }
+		else if (source.equals(InfoButton)) {
+			manager.switchTo(ATM.INFORMATION_VIEW);
+		}
+		else if (source.equals(CloseButton)) {
+			int choice = JOptionPane.showConfirmDialog(
+					this, "Are you sure?",
+					"Close Account",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE
+				);
 
-					}
+				if (choice == 0) {
+					manager.closeAccount();
 				}
-			} catch (Exception e1) { }
 
 		}
-		return false;
+
 	}
-	
-	public void setSuccess(boolean success) {
-		if (success) {
-			statusText.setText("Success!");
-		}
-	}
-	public boolean deposit() {
-		String deposit = JOptionPane.showInputDialog("How much would you like to deposit?\n (Enter ONLY numbers greater than 0)");
-		if (deposit == null) {
-			return false;
-		}
-		double depositAmount = 0;
-		try {
-			depositAmount = Double.parseDouble(deposit);
-		} catch (Exception e1) {
-			return this.deposit();
-		}
 		
-		if(account.deposit(depositAmount) == ATM.SUCCESS) {
-			String info = String.format("Account Number: %d, Balance: $%.2f", account.getAccountNumber(), account.getBalance());
-			InfoText.setText(info);
-			return manager.updateAccount(account);
-		} else {
-			return this.deposit();
-		}
-	}
-	
-	public boolean withdraw() {
-		String withdraw = JOptionPane.showInputDialog("How much would you like to withdraw?\n (Enter ONLY numbers greater than 0 and less than your balance)");
-		if (withdraw == null) {
-			return false;
-		}
-		double withdrawAmount = 0;
-		try {
-			withdrawAmount = Double.parseDouble(withdraw);
-		} catch (Exception e1) {
-			return this.withdraw();
-		}
-		
-		if(account.withdraw(withdrawAmount) == ATM.SUCCESS) {
-			String info = String.format("Account Number: %d, Balance: $%.2f", account.getAccountNumber(), account.getBalance());
-			InfoText.setText(info);
-			return manager.updateAccount(account);
-		} else {
-			return this.withdraw();
-		}
-	}
-	
 	public void setAccount(BankAccount account) {
 		this.account = account;
 		if (this.account != null) {

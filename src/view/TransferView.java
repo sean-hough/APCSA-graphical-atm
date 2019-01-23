@@ -17,16 +17,18 @@ import javax.swing.JTextField;
 import controller.ViewManager;
 
 @SuppressWarnings("serial")
-public class DepositView extends JPanel implements ActionListener {
+public class TransferView extends JPanel implements ActionListener {
 	
 	private ViewManager manager;		// manages interactions between the views, model, and database
 	
 	private JButton BackButton;
-	private JButton DepositButton;
+	private JButton TransferButton;
 
 	private JLabel errorMessageLabel;
 	private JLabel welcomeText;
-	private JTextField InputText;
+	private JLabel welcomeText2;
+	private JTextField AccountText;
+	private JTextField AmountText;
 	private JLabel statusText;
 
 	/**
@@ -35,7 +37,7 @@ public class DepositView extends JPanel implements ActionListener {
 	 * @param manager
 	 */
 	
-	public DepositView(ViewManager manager) {
+	public TransferView(ViewManager manager) {
 		super();
 		this.manager = manager;
 		
@@ -46,22 +48,33 @@ public class DepositView extends JPanel implements ActionListener {
 	private void initialize() {
 		this.add(Box.createVerticalStrut(80));
 		Box firstRow = new Box(BoxLayout.X_AXIS);
-		welcomeText = new JLabel("How much would you like to deposit?");
+		welcomeText = new JLabel("What account would you like to transfer to?");
 		firstRow.add(welcomeText);
 		this.add(firstRow);
 		
-		this.add(Box.createVerticalStrut(100));
+		this.add(Box.createVerticalStrut(20));
 		Box secondRow = new Box(BoxLayout.X_AXIS);
-		InputText = new JTextField(75);
-		secondRow.add(InputText);
+		AccountText = new JTextField(75);
+		secondRow.add(AccountText);
 		this.add(secondRow);
-		this.add(new Box(BoxLayout.X_AXIS));
+		
+		this.add(Box.createVerticalStrut(20));
+		Box ex1Row = new Box(BoxLayout.X_AXIS);
+		welcomeText2 = new JLabel("How much would you like to transfer?");
+		ex1Row.add(welcomeText2);
+		this.add(ex1Row);
+
+		this.add(Box.createVerticalStrut(20));
+		Box extraRow = new Box(BoxLayout.X_AXIS);
+		AmountText = new JTextField(75);
+		extraRow.add(AmountText);
+		this.add(extraRow);
 		
 		this.add(Box.createVerticalStrut(30));
 		Box thirdRow = new Box(BoxLayout.X_AXIS);
-		DepositButton = new JButton("Deposit");
-		DepositButton.addActionListener(this);
-		thirdRow.add(DepositButton);
+		TransferButton = new JButton("Transfer");
+		TransferButton.addActionListener(this);
+		thirdRow.add(TransferButton);
 		this.add(Box.createHorizontalStrut(0));
 		BackButton = new JButton("Return Home");
 		BackButton.addActionListener(this);
@@ -110,22 +123,24 @@ public class DepositView extends JPanel implements ActionListener {
 			this.removeAll();
 			this.initialize();
 		}
-		else if (source.equals(DepositButton)) {
-			String amountString = this.InputText.getText();
+		else if (source.equals(TransferButton)) {
+			String amountString = this.AmountText.getText();
+			String AccountString = this.AccountText.getText();
 			try  {  
 			    double amount = Double.parseDouble(amountString);
-			    if (manager.deposit(amount)) {
+			    long account = Long.parseLong(AccountString);
+			    if (manager.transfer(account, amount)) {
 			    	manager.switchTo(ATM.HOME_VIEW);
 					this.removeAll();
 					this.initialize();
 			    }
 			    else {
-					errorMessageLabel.setText("Invalid deposit amount");  
+					errorMessageLabel.setText("Invalid Account Number and/or transfer amount");  
 			    }
 		    }
 			  catch(NumberFormatException nfe)  
 			  {
-				this.errorMessageLabel.setText("Please input a signle number ONLY");  
+				this.errorMessageLabel.setText("Please input ONLY numbers into the above fields.");  
 			  }  
 		}
 	}

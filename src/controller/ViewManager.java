@@ -10,6 +10,7 @@ import data.Database;
 import model.BankAccount;
 import view.ATM;
 import view.HomeView;
+import view.InformationView;
 import view.LoginView;
 
 public class ViewManager {
@@ -39,7 +40,43 @@ public class ViewManager {
 	 * @param accountNumber
 	 * @param pin
 	 */
+
+	public boolean deposit(double amount) {
+		if (account.deposit(amount) == ATM.SUCCESS) {
+			this.updateAccount(account);
+			HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+			hv.setAccount(account);
+			return true;
+	    } else {
+	    	return false;
+	    	}
+	}
 	
+	public boolean withdraw(double amount) {
+		if (account.withdraw(amount) == ATM.SUCCESS) {
+			this.updateAccount(account);
+			HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+			hv.setAccount(account);
+			return true;
+	    } else {
+	    	return false;
+	    	}
+	}
+
+	public boolean transfer(long accountNum, double amount) {
+		destination = db.getAccount(accountNum);
+		if (destination == null) {
+			return false;
+		}
+		
+		if (account.transfer(destination, amount)==ATM.SUCCESS && db.updateAccount(account) && db.updateAccount(destination)) {
+			HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+			hv.setAccount(account);
+			return true;
+		}
+		return false;
+	}
+
 	public void login(String accountNumber, char[] pin) {
 		try {
 			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
@@ -48,12 +85,17 @@ public class ViewManager {
 				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
 				lv.updateErrorMessage("Invalid account number and/or PIN.");
 			} else {
-				HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
-				hv.setAccount(account);
-				switchTo(ATM.HOME_VIEW);
-				
-				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-				lv.updateErrorMessage("");
+				if (account.getStatus() == 'N') {
+					LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+					lv.updateErrorMessage("Account has been closed, sorry!");
+				} else {
+					HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+					hv.setAccount(account);
+					switchTo(ATM.HOME_VIEW);
+					
+					LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+					lv.updateErrorMessage("");
+				}
 			}
 		} catch (NumberFormatException e) {
 			// ignore
@@ -74,6 +116,12 @@ public class ViewManager {
 	
 	public void switchTo(String view) {
 		((CardLayout) views.getLayout()).show(views, view);
+		
+		if (view.equals(ATM.INFORMATION_VIEW)) {
+			InformationView Iv = ((InformationView) views.getComponents()[ATM.INFORMATION_VIEW_INDEX]);
+			Iv.switchingToInformationView(account);
+
+		}
 	}
 	
 	/**
@@ -106,19 +154,19 @@ public class ViewManager {
 		db.insertAccount(acc);
 	}
 	public boolean updateAccount(BankAccount account) { 
+		if (account.getAccountNumber() == this.account.getAccountNumber()) {
+			this.account = account;
+			HomeView hv = ((HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+			hv.setAccount(account);
+		}
 		return db.updateAccount(account);
 	}
-	public boolean transfer(long accountNum, double amount) {
-		destination = db.getAccount(accountNum);
-		if (destination == null) {
-			JOptionPane.showMessageDialog(views, "Account Number Invalid!", "Error", JOptionPane.WARNING_MESSAGE);
-			return false;
-		}
-		
-		if (account.transfer(destination, amount)==ATM.SUCCESS && db.updateAccount(account) && db.updateAccount(destination)) {
+	public boolean closeAccount() {
+		if (db.closeAccount(this.account)) {
+			this.logOut();
 			return true;
-		}
-		JOptionPane.showMessageDialog(views, "Transfer Unsuccessful!", "Error", JOptionPane.WARNING_MESSAGE);
-		return false;
+		} else {
+			return false;
+		}		
 	}
 }

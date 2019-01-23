@@ -17,12 +17,12 @@ import javax.swing.JTextField;
 import controller.ViewManager;
 
 @SuppressWarnings("serial")
-public class DepositView extends JPanel implements ActionListener {
+public class WithdrawView extends JPanel implements ActionListener {
 	
 	private ViewManager manager;		// manages interactions between the views, model, and database
 	
 	private JButton BackButton;
-	private JButton DepositButton;
+	private JButton WithdrawButton;
 
 	private JLabel errorMessageLabel;
 	private JLabel welcomeText;
@@ -35,7 +35,7 @@ public class DepositView extends JPanel implements ActionListener {
 	 * @param manager
 	 */
 	
-	public DepositView(ViewManager manager) {
+	public WithdrawView(ViewManager manager) {
 		super();
 		this.manager = manager;
 		
@@ -46,7 +46,7 @@ public class DepositView extends JPanel implements ActionListener {
 	private void initialize() {
 		this.add(Box.createVerticalStrut(80));
 		Box firstRow = new Box(BoxLayout.X_AXIS);
-		welcomeText = new JLabel("How much would you like to deposit?");
+		welcomeText = new JLabel("How much would you like to withdraw?");
 		firstRow.add(welcomeText);
 		this.add(firstRow);
 		
@@ -55,13 +55,12 @@ public class DepositView extends JPanel implements ActionListener {
 		InputText = new JTextField(75);
 		secondRow.add(InputText);
 		this.add(secondRow);
-		this.add(new Box(BoxLayout.X_AXIS));
 		
 		this.add(Box.createVerticalStrut(30));
 		Box thirdRow = new Box(BoxLayout.X_AXIS);
-		DepositButton = new JButton("Deposit");
-		DepositButton.addActionListener(this);
-		thirdRow.add(DepositButton);
+		WithdrawButton = new JButton("Withdraw");
+		WithdrawButton.addActionListener(this);
+		thirdRow.add(WithdrawButton);
 		this.add(Box.createHorizontalStrut(0));
 		BackButton = new JButton("Return Home");
 		BackButton.addActionListener(this);
@@ -110,17 +109,17 @@ public class DepositView extends JPanel implements ActionListener {
 			this.removeAll();
 			this.initialize();
 		}
-		else if (source.equals(DepositButton)) {
+		else if (source.equals(WithdrawButton)) {
 			String amountString = this.InputText.getText();
 			try  {  
 			    double amount = Double.parseDouble(amountString);
-			    if (manager.deposit(amount)) {
+			    if (manager.withdraw(amount)) {
 			    	manager.switchTo(ATM.HOME_VIEW);
 					this.removeAll();
 					this.initialize();
 			    }
 			    else {
-					errorMessageLabel.setText("Invalid deposit amount");  
+					errorMessageLabel.setText("Invalid withdraw amount");  
 			    }
 		    }
 			  catch(NumberFormatException nfe)  
